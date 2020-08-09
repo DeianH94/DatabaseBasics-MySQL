@@ -1,0 +1,103 @@
+﻿Part I – Queries for SoftUni Database
+
+1. Find Names of All Employees by First Name
+SELECT first_name, last_name FROM employees
+WHERE LOWER(SUBSTRING(first_name, 1, 2)) = "sa"
+ORDER BY employee_id;
+
+2. Find Names of All employees by Last Name
+SELECT first_name, last_name FROM employees
+WHERE LOCATE("ei", LOWER(last_name))
+ORDER BY employee_id;
+
+3. Find First Names of All Employees
+SELECT first_name FROM employees
+WHERE department_id IN (3, 10) AND
+YEAR(hire_date) BETWEEN 1995 AND 2005
+ORDER BY employee_id;
+
+4. Find All Employees Except Engineers
+SELECT first_name, last_name FROM employees
+WHERE NOT LOCATE("engineer", LOWER(job_title))
+ORDER BY employee_id;
+
+5. Find Towns with Name Length
+SELECT name FROM towns
+WHERE CHAR_LENGTH(name) IN (5, 6)
+ORDER BY name;
+
+6. Find Towns Starting With
+SELECT * FROM towns
+WHERE LOWER(SUBSTRING(name, 1, 1)) IN ('M', 'K', 'B', 'E')
+ORDER BY name;
+
+7. Find Towns Not Starting With
+SELECT * FROM towns
+WHERE NOT LOWER(SUBSTRING(name, 1, 1)) IN ('R', 'B', 'D')
+ORDER BY name;
+
+8. Create View Employees Hired After 2000 Year
+CREATE VIEW v_employees_hired_after_2000 AS
+SELECT first_name, last_name FROM employees
+WHERE YEAR(hire_date) > 2000; 
+
+9. Length of Last Name
+SELECT first_name, last_name FROM employees
+WHERE CHAR_LENGTH(last_name) = 5; 
+
+Part II – Queries for Geography Database
+
+10. Countries Holding ‘A’ 3 or More Times
+SELECT country_name, iso_code FROM countries
+WHERE LOWER(country_name) LIKE '%a%a%a%'
+ORDER BY iso_code;
+
+11. Mix of Peak and River Names
+SELECT peak_name, river_name, LOWER(concat(peak_name, SUBSTRING(river_name, 2))) AS mix
+FROM peaks, rivers
+WHERE RIGHT(peak_name, 1) = LEFT(river_name, 1)
+ORDER BY mix;
+
+Part III – Queries for Diablo Database
+
+12. Games from 2011 and 2012 year
+SELECT name, DATE_FORMAT(`start`, '%Y-%m-%d')
+FROM games
+WHERE YEAR(`start`) = 2011 OR YEAR(`start`) = 2012
+ORDER BY `start`, name limit 50;
+
+13. User Email Providers
+SELECT user_name, SUBSTRING(email, LOCATE('@', email) + 1) AS email_provider
+FROM users
+ORDER BY email_provider, user_name;
+
+14. Get Users with IP Address Like Pattern
+SELECT user_name, ip_address
+FROM users
+WHERE ip_address LIKE '___.1%.%.___'
+ORDER BY user_name;
+
+15. Show All Games with Duration and Part of the Day
+SELECT name AS game,
+CASE 
+	WHEN HOUR(`start`) >= 0 AND HOUR(`start`) < 12 THEN "Morning"
+	WHEN HOUR(`start`) >= 12 AND HOUR(`start`) < 18 THEN "Afternoon"
+	WHEN HOUR(`start`) >= 18 AND HOUR(`start`) < 24 THEN "Evening"
+	ELSE "Error"
+END AS `hour`,
+CASE
+	WHEN duration <= 3 THEN "Extra Short"
+	WHEN duration BETWEEN 3 AND 6 THEN "Short"
+	WHEN duration BETWEEN 6 AND 10 THEN "Long"
+	ELSE "Extra Long"
+END AS duration
+FROM games;
+
+Part IV – Date Functions Queries
+
+16. Orders Table
+SELECT product_name,
+order_date, 
+ADDDATE(order_date, 3) AS pay_due,
+ADDDATE(order_date, INTERVAL 1 MONTH) AS deliver_due
+FROM orders;

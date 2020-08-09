@@ -1,0 +1,498 @@
+MySQL 
+Exercises: Data Definition and Data Types
+1.Create Database
+USE DATABASE minoins;
+
+2.Create Tables
+USE minions;
+
+CREATE TABLE minions(
+	id INT NOT NULL PRIMARY KEY,
+	name VARCHAR(50),
+	age INT 
+);
+
+CREATE TABLE towns(
+	id INT NOT NULL PRIMARY KEY,
+	name VARCHAR(50)
+);
+
+3.Alter Minions Table
+ALTER TABLE minions
+ADD town_id INT NOT NULL,
+ADD CONSTRAINT FK_id_town_id 
+FOREIGN KEY (town_id) 
+REFERENCES towns (id);
+
+4.Insert Records in Both Tables
+INSERT INTO towns
+VALUES(1, 'Sofia'),
+(2, 'Plovdiv'),
+(3, 'Varna');
+
+INSERT INTO minions
+VALUES(1, 'Kevin', 22, 1),
+(2, 'Bob', 15, 3),
+(3, 'Steward', NULL, 2);
+
+7.Create Table People
+USE minions;
+
+CREATE TABLE people(
+	id INT UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(200) NOT NULL,
+	picture LONGBLOB,
+	height FLOAT(4, 2),
+	weight FLOAT(4, 2),
+	gender ENUM('m', 'f') NOT NULL,
+	birthdate DATE NOT NULL,
+	biography LONGTEXT
+);
+
+INSERT INTO people
+VALUES(DEFAULT, 'Ivan Ivanov Ivanov', NULL, 1.82, 84.5, 'm', '1991-06-15', NULL),
+(DEFAULT, 'Georgi Georgiev Ivanov', NULL, 1.75, 72.35, 'm', '1994-06-12', NULL),
+(DEFAULT, 'Mariq Georgieva Marinova', NULL, 1.6, 55.65, 'f', '1992-08-02', NULL),
+(DEFAULT, 'Test Test Test', NULL, 1.5, 55.95, 'f', '1995-08-02', NULL),
+(DEFAULT, 'Test2 Test2 Test2', NULL, 1.8, 55.65, 'f', '1992-09-02', NULL);
+
+8.Create Table Users
+USE minions;
+
+CREATE TABLE users(
+	id INT UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	username VARCHAR(30) NOT NULL UNIQUE,
+	`password` VARCHAR(26) NOT NULL,
+	profile_picture LONGBLOB,
+	last_login_time TIMESTAMP,
+	is_deleted ENUM('true', 'false')
+);
+
+INSERT INTO users
+VALUES(DEFAULT, 'Programist94', 'parola', NULL, NULL, 'false'),
+(DEFAULT, 'Random', '1234', NULL, NULL, 'false'),
+(DEFAULT, 'Random92', 'qwert', NULL, NULL, 'false'),
+(DEFAULT, 'Test15', 'abvg', NULL, NULL, 'false'),
+(DEFAULT, 'Test32', 'asdf', NULL, NULL, 'true');
+
+9.Change Primary Key
+ALTER TABLE users
+DROP PRIMARY KEY,
+ADD PRIMARY KEY(id, username);
+
+10.Set Default Value of a Field
+ALTER TABLE users
+CHANGE COLUMN last_login_time last_login_time
+TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+11.Set Unique Field
+ALTER TABLE users
+DROP PRIMARY KEY,
+ADD PRIMARY KEY(id),
+ADD UNIQUE(username);
+
+12.Movies Database
+CREATE DATABASE movies;
+
+USE movies;
+
+CREATE TABLE directors(
+	id INT UNSIGNED  NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	director_name VARCHAR(50) NOT NULL,
+	notes LONGTEXT
+);
+
+CREATE TABLE genres(
+	id INT UNSIGNED  NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	genres_name VARCHAR(50) NOT NULL,
+	notes LONGTEXT
+);
+
+CREATE TABLE categories(
+	id INT UNSIGNED  NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	category_name VARCHAR(50) NOT NULL,
+	notes LONGTEXT
+);
+
+CREATE TABLE movies(
+	id INT UNSIGNED  NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	title VARCHAR(50) NOT NULL UNIQUE,
+	director_id INT UNSIGNED  NOT NULL,
+	copyright_year YEAR NOT NULL,
+	`length` TIME NOT NULL,
+	genre_id INT UNSIGNED  NOT NULL,
+	category_id INT UNSIGNED  NOT NULL,
+	rating FLOAT(4,2) NOT NULL,
+	notes LONGTEXT,
+	FOREIGN KEY (director_id) REFERENCES directors (id),
+	FOREIGN KEY (genre_id) REFERENCES genres (id),
+	FOREIGN KEY (category_id) REFERENCES categories (id)
+);
+
+INSERT INTO directors (director_name, notes) VALUES
+('First Director Name', 'Test Note 1'),
+('Second Director Name', 'Test Note 2'),
+('Random Director Name', NULL),
+('Director Director', 'aaaaaaaa'),
+('Test Director', NULL);
+
+INSERT INTO genres (genres_name, notes) VALUES
+('First Genre Name', 'Test Note 1'),
+('Second Genre Name', 'Test Note 2'),
+('Random Genre Name', NULL),
+('Genre Genre', 'aaaaaaaa'),
+('Test Genre', NULL);
+
+INSERT INTO categories (category_name, notes) VALUES
+('First category Name', 'Test Note 1'),
+('Second category Name', 'Test Note 2'),
+('Random category Name', NULL),
+('category category', 'aaaaaaaa'),
+('Test category', NULL);
+
+INSERT INTO movies (title, director_id, copyright_year, `length`, genre_id, category_id, rating, notes) VALUES
+('Test Titel 1', 1, '1994', '02:07:00', 1, 1, 8.2, 'Test Notes'),
+('Test Titel 2', 2, '1998', '01:30:00', 4, 2, 6.23, 'Test Notes 2'),
+('Test Titel 3', 3, '2007', '02:17:00', 5, 1, 8.2, NULL),
+('Test Titel 4', 4, '2015', '03:00:00', 3, 4, 9.2, 'Test Notes'),
+('Test Titel 5', 5, '2017', '02:07:00', 3, 1, 5.98, 'Test Notes');
+
+13.Car Rental Database
+CREATE DATABASE car_rental;
+
+USE car_rental;
+
+CREATE TABLE categories(
+	id INT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	category VARCHAR(30) NOT NULL,
+	daily_rate FLOAT(5, 2) NOT NULL,
+	weekly_rate FLOAT(5, 2),
+	monthly_rate FLOAT(5, 2),
+	weekend_rate FLOAT(5, 2)
+);
+
+CREATE TABLE cars(
+	id INT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	plate_number VARCHAR(30) NOT NULL UNIQUE,
+	make VARCHAR(30) NOT NULL,
+	model VARCHAR(30) NOT NULL,
+	car_year YEAR NOT NULL,
+	category_id INT UNSIGNED NOT NULL,
+	doors INT UNSIGNED NOT NULL,
+	picture BLOB,
+	car_condition VARCHAR(30),
+	available ENUM('true', 'false')
+);
+
+CREATE TABLE employees(
+	id INT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	first_name VARCHAR(30) NOT NULL,
+	last_name VARCHAR(30) NOT NULL,
+	title VARCHAR(30) NOT NULL,
+	notes TEXT
+);
+
+CREATE TABLE customers(
+	id INT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	driver_licence_number VARCHAR(50) NOT NULL,
+	full_name VARCHAR(30) NOT NULL,
+	address VARCHAR(50) NOT NULL,
+	city VARCHAR(30) NOT NULL,
+	zip_code VARCHAR(10) NOT NULL,
+	notes TEXT
+);
+
+CREATE TABLE rental_orders(
+	id INT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	employee_id INT UNSIGNED NOT NULL,
+	customer_id INT UNSIGNED NOT NULL,
+	car_id INT UNSIGNED NOT NULL,
+	car_condition VARCHAR(30),
+	tank_level FLOAT(5,2) UNSIGNED NOT NULL,
+	kilometrage_start INT UNSIGNED NOT NULL,
+	kilometrage_end INT UNSIGNED NOT NULL,
+	total_kilometrage INT(20) UNSIGNED NOT NULL,
+	start_date DATE NOT NULL,
+	end_date DATE NOT NULL,
+	total_days INT NOT NULL,
+	rate_applied FLOAT(5,2) UNSIGNED NOT NULL,
+	tax_rate DECIMAL(6,2) UNSIGNED NOT NULL,
+	order_status ENUM('Reserved', 'Rented', 'Free') NOT NULL,
+	notes TEXT
+);
+
+INSERT INTO categories(category, daily_rate, weekly_rate, monthly_rate, weekend_rate) VALUES
+	('Standard', 85.20, 70.00, 67.50, 90.00),
+	('Improved', 90.00, 85.00, 80.00, 95.00),
+	('Luxory', 120.00, 112.56, 105.50, 130.00);
+
+INSERT INTO cars (plate_number, make, model, car_year, category_id, doors, car_condition, available) VALUES
+	('SF-1234-BB', 'BMW', 'model', 2010, 1, 2, 'Excelend', 'true'),
+	('BN-3210-KK', 'Ford', 'model', 2010, 2, 4, 'Excelend', 'true'),
+	('SF-1234-AA', 'OPEL', 'model', 2010, 3, 2, 'Excelend', 'false');
+
+INSERT INTO employees (first_name, last_name, title) VALUES
+	('Ivan', 'Petrov','Salesman'),
+	('Petar', 'Ivnanov','Salesman'),
+	('Georgi', 'Stamenov','Manager');
+	
+INSERT INTO customers (driver_licence_number, full_name, address, city, zip_code) VALUES
+	('321654987', 'Grigor Atanasov', 'Tsarigradsko shose 192', 'Sofia', '1000'),
+	('987654321', 'Stanimir Laskov', 'Pobeda 13', 'Sofia', '1000'),
+	('354813572', 'Marting Kisiov', 'Malina 32', 'Sofia', '1000');
+	
+INSERT INTO rental_orders (
+	employee_id, 
+	customer_id, 
+	car_id, 
+	car_condition, 
+	tank_level, 
+	kilometrage_start, 
+	kilometrage_end, 
+	total_kilometrage,
+	start_date, 
+	end_date, 
+	total_days,
+	rate_applied, 
+	tax_rate, 
+	order_status)
+	VALUES
+	(1, 1, 1, 'Excelent', 34.00, 432122, 432231, 109, '2018-01-20', '2018-01-28', 28, 90.00, 10.3, 3),
+	(1, 2, 2, 'Excelent', 34.00, 432122, 432231, 109, '2018-01-20', '2018-01-28', 28, 90.00, 10.3, 3),
+	(2, 3, 3, 'Excelent', 34.00, 432122, 432231, 109, '2018-01-26', '2018-01-29', 28, 90.00, 10.3, 3);
+
+14.Hotel Database
+DROP DATABASE hotel;
+
+CREATE DATABASE hotel;
+
+USE hotel;
+
+CREATE TABLE employees(
+	id INT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	first_name VARCHAR(50) NOT NULL,
+	last_name VARCHAR(50) NOT NULL,
+	title VARCHAR(50) NOT NULL,
+	notes TEXT
+);
+
+CREATE TABLE customers(
+	account_number VARCHAR(50) UNIQUE PRIMARY KEY,
+	first_name VARCHAR(50) NOT NULL,
+	last_name VARCHAR(50) NOT NULL,
+	phone_number VARCHAR(50) NOT NULL,
+	emergency_name VARCHAR(50) NOT NULL,
+	emergency_number VARCHAR(50),
+	notes TEXT
+);
+
+CREATE TABLE room_status(
+	room_status VARCHAR(50) UNIQUE PRIMARY KEY,
+	notes TEXT
+);
+
+CREATE TABLE room_types(
+	room_type VARCHAR(50) UNIQUE PRIMARY KEY,
+	notes TEXT
+);
+
+CREATE TABLE bed_types(
+	bed_type VARCHAR(50) UNIQUE PRIMARY KEY,
+	notes TEXT
+);
+
+CREATE TABLE rooms(
+	room_number INT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	room_type VARCHAR(50) NOT NULL,
+	bed_type VARCHAR(50) NOT NULL,
+	rate DOUBLE(6,2) UNSIGNED NOT NULL,
+	room_status VARCHAR(50) NOT NULL,
+	notes TEXT
+);
+
+CREATE TABLE payments(
+	id INT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	employee_id INT UNSIGNED NOT NULL,
+	payment_date DATE NOT NULL,
+	account_number VARCHAR(50) NOT NULL,
+	first_date_occupied DATE NOT NULL,
+	last_date_occupied DATE NOT NULL,
+	total_days INT UNSIGNED NOT NULL,
+	amount_charged DECIMAL(8,2) UNSIGNED NOT NULL,
+	tax_rate DECIMAL(6,2) UNSIGNED NOT NULL,
+	tax_amount DECIMAL(6,2) UNSIGNED NOT NULL,
+	payment_total DECIMAL(8,2) UNSIGNED NOT NULL,
+	notes TEXT
+);
+
+CREATE TABLE occupancies(
+	id INT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	employee_id INT UNSIGNED NOT NULL,
+	date_occupied DATE NOT NULL,
+	account_number VARCHAR(50) NOT NULL,
+	room_number INT UNSIGNED NOT NULL,
+	rate_applied DECIMAL(6,2) UNSIGNED NOT NULL,
+	phone_charge DECIMAL(6,2) UNSIGNED NOT NULL,
+	notes TEXT
+);
+
+INSERT INTO employees(first_name, last_name, title) VALUES
+	('First1', 'Last1', 'Title1'),
+	('First2', 'Last2', 'Title2'),
+	('First3', 'Last3', 'Title3');
+	
+INSERT INTO customers(
+				account_number, 
+				first_name, 
+				last_name, 
+				phone_number, 
+				emergency_name, 
+				emergency_number
+				) VALUES
+	('Account1', 'First1', 'Last1', 'Phone1', 'EName1', 'ENumber1'),
+	('Account2', 'First2', 'Last2', 'Phone2', 'EName2', 'ENumber2'),
+	('Account3', 'First3', 'Last3', 'Phone3', 'EName3', 'ENumber3');
+
+INSERT INTO room_status(room_status) VALUES
+	('free'),
+	('taken'),
+	('reserved');
+
+INSERT INTO room_types(room_type) VALUES
+	('sall'),
+	('medium'),
+	('large');
+
+INSERT INTO bed_types(bed_type) VALUES
+	('sall'),
+	('medium'),
+	('large');
+
+INSERT INTO rooms(room_type, bed_type, rate, room_status) VALUES
+	('sall', 'medium', 14.56, 'free'),
+	('medium', 'sall', 16.56, 'reserved'),
+	('large', 'large', 23.13, 'taken');
+
+INSERT INTO payments(
+				employee_id, 
+				payment_date, 
+				account_number, 
+				first_date_occupied, 
+				last_date_occupied,
+				total_days,
+				amount_charged,
+				tax_rate,
+				tax_amount,
+				payment_total
+				) VALUES
+	(1, '2017-12-13', 'Account1', '2018-12-09', '2018-12-11', 13, 156.36, 2.42, 15.56, 171.02),
+	(2, '2018-05-05', 'Account2', '2018-05-05', '2018-12-26', 13, 156, 2, 15, 171),
+	(3, '2018-02-06', 'Account3', '2018-02-06', '2018-12-26', 13, 156, 2, 15, 171);
+
+
+INSERT INTO occupancies(
+				employee_id,
+				date_occupied,
+				account_number,
+				room_number,
+				rate_applied,
+				phone_charge
+				) VALUES
+	(1, '2017-12-13', 'Account1', 1, 2, 0),
+	(2, '2017-12-13', 'Account2', 2, 2, 0),
+	(3, '2017-12-13', 'Account3', 3, 2, 0);
+
+15.Create SoftUni Database
+DROP DATABASE soft_uni;
+
+CREATE DATABASE soft_uni;
+
+USE soft_uni;
+
+CREATE TABLE towns(
+	id INT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE addresses(
+	id INT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	address_text VARCHAR(50) NOT NULL,
+	town_id INT UNSIGNED NOT NULL,
+	FOREIGN KEY (town_id) REFERENCES towns (id)
+);
+
+CREATE TABLE departments(
+	id INT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE employees(
+	id INT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT PRIMARY KEY,
+	first_name VARCHAR(50) NOT NULL,
+	middle_name VARCHAR(50),
+	last_name VARCHAR(50) NOT NULL,
+	job_title VARCHAR(50) NOT NULL,
+	department_id INT UNSIGNED NOT NULL,
+	hire_date DATE,
+	SALARY DECIMAL(8,2),
+	address_id INT UNSIGNED NOT NULL,
+	FOREIGN KEY (department_id) REFERENCES departments (id),
+	FOREIGN KEY (address_id) REFERENCES addresses (id)
+);
+
+16.Backup Database
+
+17.Basic Insert
+INSERT INTO towns(name) VALUES
+	('Sofia'),
+	('Plovdiv'),
+	('Varna'),
+	('Burgas');
+
+INSERT INTO departments(name) VALUES
+	('Engineering'),
+	('Sales'),
+	('Marketing'),
+	('Software Development'),
+	('Quality Assurance');
+
+INSERT INTO employees(
+				first_name, 
+				middle_name, 
+				last_name, 
+				job_title, 
+				department_id, 
+				hire_date, 
+				salary
+				) VALUES
+	('Ivan', 'Ivanov', 'Ivanov', '.NET Developer', 4, '2013-02-01', 3500.00),
+	('Petar', 'Petrov', 'Petrov', 'Senior Engineer', 1, '2004-03-02', 4000.00),
+	('Maria', 'Petrova', 'Ivanova', 'Intern', 5, '2016-08-28', 525.25),
+	('Georgi', 'Terziev', 'Ivanov', 'CEO', 2, '2007-12-09' , 3000.00),
+	('Peter', 'Pan', 'Pan', 'Intern', 3, '2016-08-28', 599.88);
+
+18.Basic Select All Fields
+SELECT * FROM towns;
+SELECT * FROM departments;
+SELECT * FROM employees;
+
+19.Basic Select All Fields and Order Them
+SELECT * FROM towns ORDER BY name;
+SELECT * FROM departments ORDER BY name;
+SELECT * FROM employees ORDER BY salary DESC;
+
+20.Basic Select Some Fields
+SELECT name FROM towns ORDER BY name;
+SELECT name FROM departments ORDER BY name;
+SELECT first_name, last_name, job_title, salary FROM employees ORDER BY salary DESC;
+
+21.Increase Employees Salary
+UPDATE employees SET salary = (salary * 0.1) + salary;
+SELECT salary FROM employees;
+
+22.Decrease Tax Rate
+UPDATE payments SET tax_rate = tax_rate - (tax_rate * 0.03);
+SELECT tax_rate FROM payments;
+
+23.Delete All Records
+TRUNCATE TABLE occupancies;
